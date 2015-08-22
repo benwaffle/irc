@@ -3,48 +3,54 @@ var badwords = require('badwords/array');
 var blasphemer = require('blasphemy');
 var eightball = require('eightball');
 
-var client = new irc.Client('irc.rizon.net', 'memebot', {
+var client = new irc.Client('irc.rizon.net', 'jsbot', {
 	channels: ['#randomtestingbots'],
 	debug: true
 });
 
+Array.prototype.random = function () {
+		return this[Math.floor(Math.random() * this.length)];
+};
+
 const admin = 'benwaffle';
 const activator = ',';
 const commands = {
-	'^,join #\\w+': function (from, to, args) {
-		if (from == admin && args && args[0][0] == '#')
-			client.join(args[0]);
+	'^,join #\\w+': function (from, to, msg) {
+		var arg = msg.split(' ')[1];
+		if (from == admin && arg[0] == '#')
+			client.join(arg);
 		else
-			return ''
+			return irc.colors.wrap('light_red', 'you have no power here');
 	},
-	'^,part #\\w+': function (from, to) {
+	'^,part': function (from, to) {
 		if (from == admin && to[0] == '#')
 			client.part(to);
+		else
+			return irc.colors.wrap('light_red', 'you have no power here');
 	},
 	'^\\.bots$': function () {
-		return 'Reporting in! [node.js] the only real dev language';
+		return 'Reporting in! ' + irc.colors.wrap('light_green', '[node.js™]') +  ' http://git.io/vsVQu';
 	},
-	'^,meanie( \\d+)?': function (from, to, args) {
-		var count = 1;
-		if (args && args[0].length > 0)
-			count = parseInt(args[0]);
-		if (count > 30)
-			count = 30;
-		var reply = '';
-		for (var i = 0; i < count; ++i)
-			reply += badwords[Math.floor(Math.random()*badwords.length)] + ' ';
-		return reply;
+
+	'^,meanie': function (from, to, msg) {
+		return badwords.random();
 	},
 	'^,blasphemy': function () {
 		return blasphemer.blaspheme();
 	},
-	'^,8ball': function (from, to, args) {
-		if (args)
+	'^,8ball': function (from, to, msg) {
+		if (msg.split(' ').length > 1)
 			return eightball();
 	},
 	'^,fku': function () {
 		return 'why you heff to be mad?';
-	}
+	},
+	'^,dice': function (from, to, args) {
+		return ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'].random();
+	},
+	'^,help': function (from, to) {
+		client.notice(from, 'Try: meanie \t blasphemy \t 8ball <question> \t fku \t dice');
+	},
 };
 
 client.addListener('message', function (from, to, message) {
@@ -58,13 +64,9 @@ client.addListener('message', function (from, to, message) {
 
 	for (var regex in commands) {
 		if (message.match(new RegExp(regex)) !== null) {
-			var args = message.split(' ').slice(1);
-			if (args.length == 0)
-				args = undefined; // functions can just check if (args)
+			console.log('matched /' + regex + '/');
 
-			console.log('matched /' + regex + '/ [' + args + ']');
-
-			var reply = commands[regex](from, to, args);
+			var reply = commands[regex](from, to, message);
 			if (reply)
 				client.say(dest, reply);
 			break;
