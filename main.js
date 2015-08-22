@@ -1,5 +1,7 @@
 var irc = require('irc');
 var badwords = require('badwords/array');
+var blasphemer = require('blasphemy');
+var eightball = require('eightball');
 
 var client = new irc.Client('irc.rizon.net', 'memebot', {
 	channels: ['#randomtestingbots'],
@@ -9,7 +11,20 @@ var client = new irc.Client('irc.rizon.net', 'memebot', {
 const admin = 'benwaffle';
 const activator = ',';
 const commands = {
-	meanie: function (from, to, args) {
+	'^,join #\\w+': function (from, to, args) {
+		if (from == admin && args && args[0][0] == '#')
+			client.join(args[0]);
+		else
+			return ''
+	},
+	'^,part #\\w+': function (from, to) {
+		if (from == admin && to[0] == '#')
+			client.part(to);
+	},
+	'^\\.bots$': function () {
+		return 'Reporting in! [node.js] the only real dev language';
+	},
+	'^,meanie( \\d+)?': function (from, to, args) {
 		var count = 1;
 		if (args && args[0].length > 0)
 			count = parseInt(args[0]);
@@ -20,13 +35,15 @@ const commands = {
 			reply += badwords[Math.floor(Math.random()*badwords.length)] + ' ';
 		return reply;
 	},
-	join: function (from, to, args) {
-		if (from == admin && args && args[0][0] == '#')
-			client.join(args[0]);
+	'^,blasphemy': function () {
+		return blasphemer.blaspheme();
 	},
-	part: function (from, to, args) {
-		if (from == admin && to[0] == '#')
-			client.part(to);
+	'^,8ball': function (from, to, args) {
+		if (args)
+			return eightball();
+	},
+	'^,fku': function () {
+		return 'why you heff to be mad?';
 	}
 };
 
@@ -39,14 +56,15 @@ client.addListener('message', function (from, to, message) {
 	else // user => bot
 		dest = from;
 
-	var msgArr = message.split(' ');
-	for (var cmd in commands) {
-		if (activator + cmd == msgArr[0]) {
-			var args = msgArr.slice(1);
-			if (args.length == 0) args = undefined;
+	for (var regex in commands) {
+		if (message.match(new RegExp(regex)) !== null) {
+			var args = message.split(' ').slice(1);
+			if (args.length == 0)
+				args = undefined; // functions can just check if (args)
 
-			console.log(cmd + '(' + from + ', ' + to + ', [' + args + '])');
-			var reply = commands[cmd](from, to, args);
+			console.log('matched /' + regex + '/ [' + args + ']');
+
+			var reply = commands[regex](from, to, args);
 			if (reply)
 				client.say(dest, reply);
 			break;
