@@ -2,15 +2,16 @@ var irc = require('irc');
 var badwords = require('badwords/array');
 
 var client = new irc.Client('irc.rizon.net', 'memebot', {
-	channels: ['#pasta'],
+	channels: ['#randomtestingbots'],
 	debug: true
 });
 
+const admin = 'benwaffle';
 const activator = ',';
 const commands = {
 	meanie: function (from, to, args) {
 		var count = 1;
-		if (args.length > 0 && args[0].length > 0)
+		if (args && args[0].length > 0)
 			count = parseInt(args[0]);
 		if (count > 30)
 			count = 30;
@@ -18,6 +19,14 @@ const commands = {
 		for (var i = 0; i < count; ++i)
 			reply += badwords[Math.floor(Math.random()*badwords.length)] + ' ';
 		return reply;
+	},
+	join: function (from, to, args) {
+		if (from == admin && args && args[0][0] == '#')
+			client.join(args[0]);
+	},
+	part: function (from, to, args) {
+		if (from == admin && to[0] == '#')
+			client.part(to);
 	}
 };
 
@@ -33,9 +42,14 @@ client.addListener('message', function (from, to, message) {
 	var msgArr = message.split(' ');
 	for (var cmd in commands) {
 		if (activator + cmd == msgArr[0]) {
-			var reply = commands[cmd](from, to, msgArr.slice(1));
-			if (reply !== undefined)
+			var args = msgArr.slice(1);
+			if (args.length == 0) args = undefined;
+
+			console.log(cmd + '(' + from + ', ' + to + ', [' + args + '])');
+			var reply = commands[cmd](from, to, args);
+			if (reply)
 				client.say(dest, reply);
+			break;
 		}
 	}
 });
