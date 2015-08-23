@@ -13,10 +13,10 @@ client.addListener('message', function (from, to, message) {
 	try {
 		// simple live reload
 		require('./commands.js')(client, from, to, message);
-		delete require.cache[require.resolve('./commands.js')];
 	} catch (err) {
 		console.log(err);
 	}
+	delete require.cache[require.resolve('./commands.js')];
 });
 
 client.addListener('error', function (message) {

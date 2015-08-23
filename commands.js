@@ -1,8 +1,18 @@
 var irc = require('irc');
+var badwords = require('badwords/array');
 
-module.exports = function (client, from, to, message) {
-	const admin = 'benwaffle';
+const admin = 'benwaffle';
+var client;
+var dest;
+
+module.exports = function (_client, from, to, message) {
+	client = _client;
+	// at the top so async functions can reply
+	if (to[0] == '#') dest = to; // user => #channel
+	else dest = from; // user => bot
+
 	const commands = {
+		// utility stuff
 		'^,join #\\w+': function (from, to, msg) {
 			var arg = msg.split(' ')[1];
 			if (from == admin && arg[0] == '#')
@@ -16,43 +26,49 @@ module.exports = function (client, from, to, message) {
 			else
 				return irc.colors.wrap('light_red', 'you have no power here');
 		},
-
 		// https://github.com/Teknikode/IBIP
 		'^\\.bots$': 'Reporting in! [node.js] http://git.io/vsVQu',
-
-		'^,help$': function (from, to) {
-			client.notice(from, 'Try: \t meanie \t blasphemy \t 8ball <question> \t dice');
-		},
-		'^,meanie$': function (from, to, msg) {
-			return require('badwords/array').random();
-		},
-		'^,blasphemy$': function () {
-			return require('blasphemy').blaspheme();
-		},
-		'^,8ball .+': function (from, to, msg) {
-			return require('eightball')();
-		},
-		'^,dice$': function () {
-			return ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'].random();
-		},
-		'fuck you': 'why you heff to be mad?',
-		'^test$': '✔',
-		'^ayy$': 'lmao',
-		'^420$': 'blaze it',
-		'^same$': 'same',
-		'^no u$': 'no u',
 	};
+
+	// ,command
+	commands['^,meanie$'] = function (from, to, msg) {
+		return badwords.random();
+	};
+	commands['^,blasphemy$'] = function () {
+		return require('blasphemy').blaspheme();
+	};
+	commands['^,8ball .+'] = function (from, to, msg) {
+		return require('eightball')();
+	};
+	commands['^,dice( \\d+)'] = function (from, to, msg) {
+		var count = parseInt(msg.split(' ')[1]) || 1;
+		count = Math.min(count, 100);
+		var reply = '';
+		for (var i = 0; i < count; ++i)
+			reply += ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'].random();
+		return reply;
+	};
+	commands['^,source$'] = function (from, to, msg) {
+		client.notice(from, 'My NLP magic is really just regex (http://git.io/vsVQu)');
+	};
+	developerExcuses(commands);
+	botHate(commands);
+
+	// not at bot
+	commands['(fuck ?you|fuck ?off)'] = 'why you heff to be mad?';
+
+	commands['^test$'] = '✔';
+	commands['^ayy$'] = 'lmao';
+	commands['^420$'] = 'blaze it';
+	commands['^same$'] = 'same';
+	commands['^\\^$'] = 'can confirm';
+	// causes infinite loop with similar bots
+	// commands['^no u$'] = 'no u';
 
 	console.log(from + ' => ' + to + ': ' + message);
 
-	var dest = '';
-	if (to[0] == '#') // user => #channel
-		dest = to;
-	else // user => bot
-		dest = from;
-
 	for (var regex in commands) {
-		if (message.match(new RegExp(regex)) !== null) {
+		if (message.trim().match(new RegExp(regex)) !== null) {;
 			console.log('matched /' + regex + '/');
 			if (typeof commands[regex] == 'string') {
 				client.say(dest, commands[regex]);
@@ -65,3 +81,28 @@ module.exports = function (client, from, to, message) {
 		}
 	}
 };
+
+function developerExcuses(commands) {
+	var object = '(code|program|script)';
+	var negative = '(never|no|does not|doesn\'?t|isn\'?t|is not)';
+	var affirmative = '(always|sometimes|usually|often)';
+	var codeactions = '(work|run)(s|ing)?';
+	var codefailure = '(crash(ed|es)?|segfault)';
+	var devexcuse = function () {
+		require('developerexcuses')(function (err, excuses) {
+			client.say(dest, excuses);
+		});
+	};
+	commands[object + '\\s+' + affirmative + '?\\s+' + codefailure] = devexcuse;
+	commands[object + '\\s+' + negative + '\\s+' + codeactions] = devexcuse;
+}
+
+function botHate(commands) {
+	// respond to message
+	var insult = '(fuck ?you|fuck ?off|die|eat a dick|kill yourself)';
+	var left = client.opt.nick + '.*' + insult;
+	var right = insult + '.*' + client.opt.nick;
+	commands['(' + left + ')|(' + right + ')'] = function () {
+		return ['stfu', 'shut up, you ' + badwords.random(), 'eh fuck you buddy', 'lalala not listening', 'leave me alone ;_;', '#stopbothate'].random();
+	};
+}
