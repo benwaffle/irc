@@ -1,1 +1,1 @@
-node --harmony main.js
+DEBUG=* node --harmony main.js

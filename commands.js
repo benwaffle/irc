@@ -1,5 +1,6 @@
 var irc = require('irc');
 var badwords = require('badwords/array');
+var debug = require('debug')('commands.js');
 
 const admin = 'benwaffle';
 var client;
@@ -51,25 +52,28 @@ module.exports = function (_client, from, to, message) {
 	commands['^,source$'] = function (from, to, msg) {
 		client.notice(from, 'My NLP magic is really just regex (http://git.io/vsVQu)');
 	};
-	developerExcuses(commands);
-	botHate(commands);
 
-	// not at bot
-	commands['(fuck ?you|fuck ?off)'] = 'why you heff to be mad?';
+	developerExcuses(commands);
+
+	commands['(fuck ?you|fuck ?off|eat a dick|kill yourself)'] = function (from, to, msg) {
+		if (msg.indexOf(client.opt.nick) != -1)
+			return ['stfu', 'shut up, you ' + badwords.random(), 'eh fuck you buddy', 'lalala not listening', 'leave me alone ;_;', '#stopbothate'].random();
+		else
+			return 'why you heff to be mad?';
+	}
 
 	commands['^test$'] = '✔';
-	commands['^ayy$'] = 'lmao';
+	commands['^ay+$'] = 'lmao';
 	commands['^420$'] = 'blaze it';
 	commands['^same$'] = 'same';
 	commands['^\\^$'] = 'can confirm';
+	commands['^(hi|hello)$'] = 'hello';
 	// causes infinite loop with similar bots
 	// commands['^no u$'] = 'no u';
 
-	console.log(from + ' => ' + to + ': ' + message);
-
 	for (var regex in commands) {
 		if (message.trim().match(new RegExp(regex)) !== null) {;
-			console.log('matched /' + regex + '/');
+			debug('matched /' + regex + '/');
 			if (typeof commands[regex] == 'string') {
 				client.say(dest, commands[regex]);
 			} else {
@@ -95,14 +99,4 @@ function developerExcuses(commands) {
 	};
 	commands[object + '\\s+' + affirmative + '?\\s+' + codefailure] = devexcuse;
 	commands[object + '\\s+' + negative + '\\s+' + codeactions] = devexcuse;
-}
-
-function botHate(commands) {
-	// respond to message
-	var insult = '(fuck ?you|fuck ?off|die|eat a dick|kill yourself)';
-	var left = client.opt.nick + '.*' + insult;
-	var right = insult + '.*' + client.opt.nick;
-	commands['(' + left + ')|(' + right + ')'] = function () {
-		return ['stfu', 'shut up, you ' + badwords.random(), 'eh fuck you buddy', 'lalala not listening', 'leave me alone ;_;', '#stopbothate'].random();
-	};
 }
