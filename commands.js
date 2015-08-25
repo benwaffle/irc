@@ -3,12 +3,13 @@ var badwords = require('badwords/array');
 var debug = require('debug')('commands.js');
 
 const admin = 'benwaffle';
-var client;
-var dest;
 
-module.exports = function (_client, from, to, message) {
-	client = _client;
+module.exports = function (client, ignored, from, to, message) {
+	if (ignored.contains(from))
+		return;
+
 	// at the top so async functions can reply
+	var dest = '';
 	if (to[0] == '#') dest = to; // user => #channel
 	else dest = from; // user => bot
 
@@ -27,14 +28,30 @@ module.exports = function (_client, from, to, message) {
 			else
 				return irc.colors.wrap('light_red', 'you have no power here');
 		},
+		'^,say \\S+ .+': function (from, to, msg) {
+			if (from == admin && to == client.opt.nick) { // only admin => bot will trigger this
+				var args = msg.split(' ');
+				client.say(args[1], args.slice(2).join(' '));
+			}
+		},
+		'^,ignore \\w+': function (from, to, msg) {
+			if (from == admin) {
+				var user = msg.split(' ')[1];
+				if (user != admin)
+					ignored.push(user);
+			}
+		},
+		'^,unignore \\w+': function (from, to, msg) {
+			if (from == admin) {
+				var user = msg.split(' ')[1];
+				delete ignored[ignored.indexOf(user)];
+			}
+		},
 		// https://github.com/Teknikode/IBIP
 		'^\\.bots$': 'Reporting in! [node.js] http://git.io/vsVQu',
 	};
 
 	// ,command
-	commands['^,meanie$'] = function (from, to, msg) {
-		return badwords.random();
-	};
 	commands['^,blasphemy$'] = function () {
 		return require('blasphemy').blaspheme();
 	};
@@ -52,10 +69,69 @@ module.exports = function (_client, from, to, message) {
 	commands['^,source$'] = function (from, to, msg) {
 		client.notice(from, 'My NLP magic is really just regex (http://git.io/vsVQu)');
 	};
+	commands['^,insult$'] = function () {
+		return require('./responses.js').insults.random();
+	};
+	commands['^,compliment$'] = function () {
+		return require('./responses.js').compliments.random();
+	};
+	commands['^,london \\w+'] = function (from, to, message) {
+		if (from != admin)
+			return irc.colors.wrap('light_red', 'you have no power here');
+		function rep(str, x) {
+			var ret = '';
+			for (var i=0; i<x; ++i) ret += str;
+			return ret;
+		}
 
-	developerExcuses(commands);
+		var msg = message.substring(',london '.length).toUpperCase();
+		var london = '';
+		for (var i = 0; i < msg.length; ++i)
+			london += msg[i] + ' ';
+		london += '\n';
+		for (var i = 1; i < msg.length-1; ++i)
+			london += msg[i] + rep('  ', msg.length-2) + ' ' + msg[msg.length-i-1] + '\n';
+		for (var i = 0; i < msg.length; ++i)
+			london += msg[msg.length-i-1] + ' ';
+		return london;
+	};
+	commands['^,gay \\w+'] = function (from, to, msg) {
+		if (msg.length > 20) msg = msg.substring(0, 20);
+		var colors = [
+		    'dark_red',
+		    'light_red',
+		    'orange',
+		    'yellow',
+		    'light_green',
+		    'dark_green',
+		    'dark_blue',
+		    'light_blue',
+		    'cyan',
+		    'light_cyan',
+		    'magenta',
+		    'light_magenta',
+		];
 
-	commands['(fuck ?you|fuck ?off|eat a dick|kill yourself)'] = function (from, to, msg) {
+		msg = msg.split(' ').slice(1).join(' ');
+		var gay = '';
+		var ci = 0;
+		for (var i = 0; i < msg.length; ++i) {
+			for (var c = 0; c < msg.length; ++c) {
+				gay += irc.colors.wrap(colors.random(), msg[c]);
+			}
+			gay += '\n';
+			msg = msg[msg.length-1] + msg.substring(0, msg.length-1);
+		}
+		return gay;
+	};
+	commands['^\\[.+\\]$'] = function (from, to, msg) {
+		var str = msg.substring(1, msg.length-1);
+		return irc.colors.wrap('bold', '[' + str.toUpperCase() + ' INTENSIFIES]');
+	}
+
+	developerExcuses(client, dest, commands);
+
+	commands['(fuck ?you|fuck ?off|eat a dick|kill (yo)?urself|shut (the fuck )?up)'] = function (from, to, msg) {
 		if (msg.indexOf(client.opt.nick) != -1)
 			return ['stfu', 'shut up, you ' + badwords.random(), 'eh fuck you buddy', 'lalala not listening', 'leave me alone ;_;', '#stopbothate'].random();
 		else
@@ -86,12 +162,12 @@ module.exports = function (_client, from, to, message) {
 	}
 };
 
-function developerExcuses(commands) {
+function developerExcuses(client, dest, commands) {
 	var object = '(code|program|script)';
 	var negative = '(never|no|does not|doesn\'?t|isn\'?t|is not)';
 	var affirmative = '(always|sometimes|usually|often)';
 	var codeactions = '(work|run)(s|ing)?';
-	var codefailure = '(crash(ed|es)?|segfault)';
+	var codefailure = '(crash(ed|es)?|segfault|is buggy|has bugs)';
 	var devexcuse = function () {
 		require('developerexcuses')(function (err, excuses) {
 			client.say(dest, excuses);
