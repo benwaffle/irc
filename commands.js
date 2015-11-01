@@ -15,7 +15,7 @@ module.exports = function (client, ignored, from, to, message) {
 
 	const commands = {
 		// utility stuff
-		'^,join #\\w+': function (from, to, msg) {
+		'^,join #\\S+': function (from, to, msg) {
 			var arg = msg.split(' ')[1];
 			if (from == admin && arg[0] == '#')
 				client.join(arg);
