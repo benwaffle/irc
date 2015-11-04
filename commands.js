@@ -67,7 +67,7 @@ module.exports = function (client, ignored, from, to, message) {
 		return reply;
 	};
 	commands['^,source$'] = function (from, to, msg) {
-		client.notice(from, 'My NLP magic is really just regex (http://git.io/vsVQu)');
+		client.notice(from, 'https://github.com/benwaffle/irc');
 	};
 	commands['^,insult$'] = function () {
 		return require('./responses.js').insults.random();
