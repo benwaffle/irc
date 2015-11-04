@@ -110,7 +110,8 @@ client.addListener('message', function (from, to, message) {
 	commands['^,london \\w+'] = function (from, to, message) {
 		function rep(str, x) {
 			var ret = '';
-			for (var i=0; i<x; ++i) ret += str;
+			for (var i=0; i<x; ++i)
+				ret += str;
 			return ret;
 		}
 
@@ -128,18 +129,18 @@ client.addListener('message', function (from, to, message) {
 	commands['^,gay \\w+'] = function (from, to, msg) {
 		if (msg.length > 20) msg = msg.substring(0, 20);
 		var colors = [
-		    'dark_red',
-		    'light_red',
-		    'orange',
-		    'yellow',
-		    'light_green',
-		    'dark_green',
-		    'dark_blue',
-		    'light_blue',
-		    'cyan',
-		    'light_cyan',
-		    'magenta',
-		    'light_magenta',
+		'dark_red',
+		'light_red',
+		'orange',
+		'yellow',
+		'light_green',
+		'dark_green',
+		'dark_blue',
+		'light_blue',
+		'cyan',
+		'light_cyan',
+		'magenta',
+		'light_magenta',
 		];
 
 		msg = msg.split(' ').slice(1).join(' ');
@@ -211,5 +212,5 @@ client.addListener('error', function (message) {
 
 setInterval(function () {
 	debug('making money');
-  client.say('taylorswift', 'bene');
+	client.say('taylorswift', 'bene');
 }, 1000 * 60 * 60);
