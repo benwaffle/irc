@@ -105,7 +105,7 @@ client.addListener('message', function (from, to, message) {
 	};
 	commands['^,money$'] = function (from, to) {
 		if (to == '#pasta')
-			return 'taylorswift: money';
+			return '.money';
 	}
 	commands['^,london \\w+'] = function (from, to, message) {
 		function rep(str, x) {
@@ -212,5 +212,5 @@ client.addListener('error', function (message) {
 
 setInterval(function () {
 	debug('making money');
-	client.say('taylorswift', 'bene');
+	client.say('taytay', '.bene');
 }, 1000 * 60 * 60);
