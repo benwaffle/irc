@@ -46,7 +46,7 @@ client.addListener('message', function (from, to, message) {
 
 	const commands = {
 		// utility stuff
-		'^,join #\\w+$': function (from, to, msg) {
+		'^,join #[^, ]+$': function (from, to, msg) {
 			if (from == admin)
 				client.join(msg.split(' ')[1]);
 			else
