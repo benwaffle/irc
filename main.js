@@ -216,6 +216,6 @@ setInterval(function () {
 }, 6 * 1000 * 60 * 60);
 
 setInterval(function () {
-    debug('making money');
-    client.say('taylorswift', 'bene');
+	debug('making money');
+	client.say('taylorswift', 'bene');
 }, 1000 * 60 * 60);
