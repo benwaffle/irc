@@ -46,6 +46,12 @@ client.addListener('message', function (from, to, message) {
 
 	const commands = {
 		// utility stuff
+		'^,join #\\w+$': function (from, to, msg) {
+			if (from == admin)
+				client.join(msg.split(' ')[1]);
+			else
+				return warnNotAdmin();
+		},
 		'^,part$': function (from, to) {
 			if (from == admin && to[0] == '#')
 				client.part(to);
@@ -129,18 +135,18 @@ client.addListener('message', function (from, to, message) {
 	commands['^,gay \\w+'] = function (from, to, msg) {
 		if (msg.length > 20) msg = msg.substring(0, 20);
 		var colors = [
-		'dark_red',
-		'light_red',
-		'orange',
-		'yellow',
-		'light_green',
-		'dark_green',
-		'dark_blue',
-		'light_blue',
-		'cyan',
-		'light_cyan',
-		'magenta',
-		'light_magenta',
+			'dark_red',
+			'light_red',
+			'orange',
+			'yellow',
+			'light_green',
+			'dark_green',
+			'dark_blue',
+			'light_blue',
+			'cyan',
+			'light_cyan',
+			'magenta',
+			'light_magenta',
 		];
 
 		msg = msg.split(' ').slice(1).join(' ');
