@@ -111,7 +111,7 @@ client.addListener('message', function (from, to, message) {
 	};
 	commands['^,money$'] = function (from, to) {
 		if (to == '#pasta')
-			return '!money\ntaylorswift: money';
+			return '!money\n' + '.money';
 	}
 	commands['^,london \\w+'] = function (from, to, message) {
 		function rep(str, x) {
