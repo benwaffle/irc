@@ -29,6 +29,7 @@ client.addListener('invite', function (channel, from, msg) {
 });
 
 client.addListener('message', function (from, to, message) {
+	message = message.trim();
 	debug(from + ' => ' + to + ': ' + message);
 
 	if (ignored.contains(from))
@@ -198,7 +199,7 @@ client.addListener('message', function (from, to, message) {
 	// commands['^no u$'] = 'no u';
 
 	for (var regex in commands) {
-		if (message.trim().match(new RegExp(regex)) !== null) {
+		if (message.match(new RegExp(regex)) !== null) {
 			debug('matched /' + regex + '/');
 			if (typeof commands[regex] == 'string') {
 				client.say(dest, commands[regex]);
