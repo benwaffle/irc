@@ -114,7 +114,7 @@ client.addListener('message', function (from, to, message) {
 		if (to == '#pasta')
 			return '!money\n' + '.money';
 	}
-	commands['^,london \\w+'] = function (from, to, message) {
+	commands['^,london .+'] = function (from, to, message) {
 		function rep(str, x) {
 			var ret = '';
 			for (var i=0; i<x; ++i)
