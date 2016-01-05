@@ -194,7 +194,7 @@ client.addListener('message', function (from, to, message) {
 	commands['^\\^$'] = 'can confirm';
 	commands['^(hi|hello)$'] = 'hello';
 	commands['^ping$'] = 'pong';
-	commands['\b(rip|RIP)\b'] = ';_;';
+	commands['\\b(rip|RIP)\\b'] = ';_;';
 	// causes infinite loop with similar bots
 	// commands['^no u$'] = 'no u';
 
