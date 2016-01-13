@@ -225,4 +225,4 @@ setInterval(function () {
 setInterval(function () {
 	debug('making money');
 	client.say('#pasta', '.bene');
-}, 1000 * 60 * 60);
+}, 1001 * 60 * 60);
