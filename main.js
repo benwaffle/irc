@@ -1,5 +1,5 @@
 var irc = require('irc');
-var http = require('http');
+var https = require('https');
 var debug = require('debug')('main.js');
 
 var client = new irc.Client('irc.rizon.net', 'jsbot', {
@@ -229,7 +229,7 @@ setInterval(function () {
 }, 1001 * 60 * 60);
 
 setInterval(function () {
-    http.get('https://wiiaam.com/moneys.txt', res => {
+    https.get('https://wiiaam.com/moneys.txt', res => {
         var list = '';
         res.on('data', x =>
             list += x.toString());
@@ -245,7 +245,7 @@ setInterval(function () {
 }, 1001 * 60 * 5);
 
 setTimeout(function () {
-    http.get('https://wiiaam.com/moneys.txt', res => {
+    https.get('https://wiiaam.com/moneys.txt', res => {
         var list = '';
         res.on('data', x =>
             list += x.toString());
