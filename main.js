@@ -243,6 +243,7 @@ setInterval(() => {
                 .split('\n')
                 .filter(l => l[0] != '#')
                 .map(x => x.split('='))
+                .filter(u => u[0] != client.opt.nick)
                 .sort((a, b) => b[1] - a[1])[0]
             var compliment = require('./responses.js').compliments.random()
             client.say('#pasta', richest[0] + ', ' + compliment)
