@@ -1,4 +1,5 @@
 var irc = require('irc');
+var http = require('http');
 var debug = require('debug')('main.js');
 
 var client = new irc.Client('irc.rizon.net', 'jsbot', {
@@ -219,10 +220,42 @@ client.addListener('error', function (message) {
 
 setInterval(function () {
 	debug('making money');
-	client.say('CummyPawsBot', '!pay');
+	client.say('#pasta', '!pay');
 }, 6 * 1000 * 60 * 60);
 
 setInterval(function () {
 	debug('making money');
 	client.say('#pasta', '.bene');
 }, 1001 * 60 * 60);
+
+setInterval(function () {
+    http.get('https://wiiaam.com/moneys.txt', res => {
+        var list = '';
+        res.on('data', x =>
+            list += x.toString());
+        res.on('end', () => {
+            var richest = list
+                .split(/\s/)
+                .filter(l => l[0] != '#')
+                .map(x => x.split('='))
+                .sort((a,b) => b[1]-a[1])[0]
+            client.say('#pasta', '.mug ' + richest[0]);
+        });
+    });
+}, 1001 * 60 * 5);
+
+setTimeout(function () {
+    http.get('https://wiiaam.com/moneys.txt', res => {
+        var list = '';
+        res.on('data', x =>
+            list += x.toString());
+        res.on('end', () => {
+            var richest = list
+                .split(/\s/)
+                .filter(l => l[0] != '#')
+                .map(x => x.split('='))
+                .sort((a,b) => b[1]-a[1])[0]
+            client.say('#pasta', '.mug ' + richest[0]);
+        });
+    });
+}, 1000 * 10);
