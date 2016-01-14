@@ -1,6 +1,6 @@
-var irc = require('irc')
-var https = require('https')
-var debug = require('debug')('main.js')
+const irc = require('irc')
+const https = require('https')
+const debug = require('debug')('main.js')
 
 var client = new irc.Client('irc.rizon.net', 'jsbot', {
     channels: ['#pasta'],
@@ -43,7 +43,7 @@ client.addListener('message', function (from, to, message) {
         dest = from // user => bot
 
     function warnNotAdmin() {
-        return irc.colors.wrap('light_red', 'you\'re not the admin')
+        return irc.colors.wrap('light_red', 'check your (administrative) privilege')
     }
 
     const commands = {
@@ -61,7 +61,7 @@ client.addListener('message', function (from, to, message) {
                 return warnNotAdmin()
         },
         '^,say \\S+ .+': function (from, to, msg) {
-            if (from == admin && to == client.opt.nick) { // only admin => bot will trigger this
+            if (from == admin) { // only admin => bot will trigger this
                 var args = msg.split(' ')
                 client.say(args[1], args.slice(2).join(' '))
             }
@@ -196,8 +196,8 @@ client.addListener('message', function (from, to, message) {
     commands['^(hi|hello)$'] = 'hello'
     commands['^ping$'] = 'pong'
     commands['\\b(rip|RIP)\\b'] = ';_;'
-        // causes infinite loop with similar bots
-        // commands['^no u$'] = 'no u';
+    // causes infinite loop with similar bots
+    // commands['^no u$'] = 'no u';
 
     for (var regex in commands) {
         if (message.match(new RegExp(regex)) !== null) {
@@ -229,14 +229,15 @@ setInterval(() => {
 }, 1001 * 60 * 60)
 
 setInterval(() => {
-    if ((Date.now() - lastmoney) * 1000 * 60 > 54) { // don't risk going to jail
+    if ((Date.now() - lastmoney) / 1000 / 60 > 54) { // don't risk going to jail
         debug('i\'d mug somebody but my money is almost here')
         return
     }
     https.get('https://wiiaam.com/moneys.txt', res => {
         var list = ''
-        res.on('data', x =>
-            list += x.toString())
+        res.on('data', x => {
+            list += x.toString();
+        })
         res.on('end', () => {
             var richest = list
                 .split('\n')
