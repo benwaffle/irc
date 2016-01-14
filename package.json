@@ -1,10 +1,10 @@
 {
-	"dependencies": {
-		"badwords": "0.0.3",
-		"blasphemy": "0.0.2",
-		"debug": "^2.2.0",
-		"developerexcuses": "0.0.1",
-		"eightball": "^1.0.1",
-		"irc": "^0.4.0"
-	}
+  "dependencies": {
+    "badwords": "0.0.3",
+    "blasphemy": "0.0.2",
+    "debug": "^2.2.0",
+    "developerexcuses": "0.0.1",
+    "eightball": "^1.0.1",
+    "irc": "^0.4.0"
+  }
 }
