@@ -235,27 +235,13 @@ setInterval(function () {
             list += x.toString());
         res.on('end', () => {
             var richest = list
-                .split(/\s/)
-                .filter(l => l[0] != '#')
-                .map(x => x.split('='))
-                .sort((a,b) => b[1]-a[1])[0]
-            client.say('#pasta', '.mug ' + richest[0]);
-        });
-    });
-}, 1001 * 60 * 5);
-
-setTimeout(function () {
-    https.get('https://wiiaam.com/moneys.txt', res => {
-        var list = '';
-        res.on('data', x =>
-            list += x.toString());
-        res.on('end', () => {
-            var richest = list
                 .split('\n')
                 .filter(l => l[0] != '#')
                 .map(x => x.split('='))
                 .sort((a,b) => b[1]-a[1])[0]
+            var compliment = require('./responses.js').compliments.random();
+            client.say('#pasta', richest[0] + ', ' + compliment);
             client.say('#pasta', '.mug ' + richest[0]);
         });
     });
-}, 1000 * 10);
+}, 1001 * 60 * 5);
