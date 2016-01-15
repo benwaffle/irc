@@ -26,7 +26,7 @@ function richestUsers(cb) {
             var richest = list
                 .split('\n')
                 .filter(l => l[0] != '#')
-                .map(x => x.split('='));
+                .map(x => x.split('='))
                 .sort((a, b) => b[1] - a[1])
             cb(richest);
         })
