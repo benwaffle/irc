@@ -16,6 +16,23 @@ Array.prototype.contains = function (obj) {
     return this.indexOf(obj) != -1
 }
 
+function richestUsers(cb) {
+    https.get('https://wiiaam.com/moneys.txt', res => {
+        var list = ''
+        res.on('data', x => {
+            list += x.toString();
+        })
+        res.on('end', () => {
+            var richest = list
+                .split('\n')
+                .filter(l => l[0] != '#')
+                .map(x => x.split('='));
+                .sort((a, b) => b[1] - a[1])
+            cb(richest);
+        })
+    })
+}
+
 var ignored = []
 
 client.addListener('notice', function (nick, to, text, msg) {
@@ -167,6 +184,17 @@ client.addListener('message', function (from, to, message) {
         var str = msg.substring(1, msg.length - 1)
         return irc.colors.wrap('bold', '[' + str.toUpperCase() + ' INTENSIFIES]')
     }
+    commands['^,richest$'] = function (from, to, msg) [
+        if (to == '#pasta') {
+            richestUsers(list => {
+                let top = list.slice(0, 5)
+                for (let u of top) {
+                    let name = (u[0] + '            ').slice(0, 10)
+                    client.say('#pasta', `${name}${u[1]}`)
+                }
+            })
+        }
+    }
 
     var object = '(code|program|script|app)'
     var negative = '(never|no|does not|doesn\'?t|isn\'?t|is not)'
@@ -199,12 +227,12 @@ client.addListener('message', function (from, to, message) {
     // causes infinite loop with similar bots
     // commands['^no u$'] = 'no u';
 
-    for (var regex in commands) {
+    for (let regex in commands) {
         if (message.match(new RegExp(regex)) !== null) {
             debug('matched /' + regex + '/')
             if (typeof commands[regex] == 'string') {
                 client.say(dest, commands[regex])
-            } else {
+            } else if (typeof commands[regex] == 'function') {
                 var reply = commands[regex](from, to, message)
                 if (reply)
                     client.say(dest, reply)
@@ -227,21 +255,8 @@ setInterval(() => {
 }, 1000 * 60 * 60 + 1000 * 2) // 1 hr + 2 sec
 
 setInterval(() => {
-    https.get('https://wiiaam.com/moneys.txt', res => {
-        var list = ''
-        res.on('data', x => {
-            list += x.toString();
-        })
-        res.on('end', () => {
-            var richest = list
-                .split('\n')
-                .filter(l => l[0] != '#')
-                .map(x => x.split('='))
-                .filter(u => u[0] != client.opt.nick)
-                .sort((a, b) => b[1] - a[1])[0]
-            var compliment = require('./responses.js').compliments.random()
-            client.say('#pasta', richest[0] + ', ' + compliment)
-            client.say('#pasta', '.mug ' + richest[0])
-        })
+    richestUsers(list => {
+        var richest = list.filter(u => u[0] != client.opt.nick)[0]
+        client.say('#pasta', '.mug ' + richest[0])
     })
 }, 1000 * 60 * 5 + 1000 * 2) // extra 2 seconds
