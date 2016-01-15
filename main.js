@@ -184,7 +184,7 @@ client.addListener('message', function (from, to, message) {
         var str = msg.substring(1, msg.length - 1)
         return irc.colors.wrap('bold', '[' + str.toUpperCase() + ' INTENSIFIES]')
     }
-    commands['^,richest$'] = function (from, to, msg) [
+    commands['^,richest$'] = function (from, to, msg) {
         if (to == '#pasta') {
             richestUsers(list => {
                 let top = list.slice(0, 5)
