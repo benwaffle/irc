@@ -1,3 +1,5 @@
+'use strict';
+
 const irc = require('irc')
 const https = require('https')
 const debug = require('debug')('main.js')
