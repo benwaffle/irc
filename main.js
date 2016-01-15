@@ -220,13 +220,13 @@ client.addListener('error', function (message) {
 
 setInterval(() => {
     client.say('#pasta', '!pay')
-}, 6 * 1000 * 60 * 60)
+}, 1000 * 60 * 60 * 6 + 1000 * 2) // 6 hour + 2 sec
 
 var lastmoney = 0
 setInterval(() => {
     lastmoney = Date.now()
     client.say('#pasta', '.bene')
-}, 1001 * 60 * 60)
+}, 1000 * 60 * 60 + 1000 * 2) // 1 hr + 2 sec
 
 setInterval(() => {
     if ((Date.now() - lastmoney) / 1000 / 60 > 54) { // don't risk going to jail
@@ -250,4 +250,4 @@ setInterval(() => {
             client.say('#pasta', '.mug ' + richest[0])
         })
     })
-}, 1001 * 60 * 5)
+}, 1000 * 60 * 5 + 1000 * 2) // extra 2 seconds
