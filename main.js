@@ -143,6 +143,8 @@ client.addListener('message', function (from, to, message) {
         }
 
         var msg = message.substring(',london '.length).toUpperCase()
+        if (msg.length > 15)
+            msg = msg.substring(0, 15)
         var london = ''
         for (var i = 0; i < msg.length; ++i)
             london += msg[i] + ' '
