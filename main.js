@@ -191,7 +191,7 @@ client.addListener('message', function (from, to, message) {
             richestUsers(list => {
                 let top = list.slice(0, 5)
                 for (let u of top) {
-                    let name = (u[0] + '            ').slice(0, 10)
+                    let name = (u[0] + '                  ').slice(0, 15)
                     client.say('#pasta', `${name}${u[1]}`)
                 }
             })
@@ -259,6 +259,6 @@ setInterval(() => {
 setInterval(() => {
     richestUsers(list => {
         var richest = list.filter(u => u[0] != client.opt.nick)[0]
-        client.say('#pasta', '.mug ' + richest[0])
+        client.say('taylorswift', '.mug ' + richest[0])
     })
-}, 1000 * 60 * 5 + 1000 * 2) // extra 2 seconds
+}, 1000 * 60 * 5 + 1000 * 2) // 5 min + 2 seconds
