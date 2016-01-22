@@ -18,6 +18,7 @@ Array.prototype.contains = function (obj) {
     return this.indexOf(obj) != -1
 }
 
+/*
 function richestUsers(cb) {
     https.get('https://wiiaam.com/moneys.txt', res => {
         var list = ''
@@ -34,6 +35,7 @@ function richestUsers(cb) {
         })
     })
 }
+*/
 
 var ignored = []
 
@@ -188,6 +190,7 @@ client.addListener('message', function (from, to, message) {
         var str = msg.substring(1, msg.length - 1)
         return irc.colors.wrap('bold', '[' + str.toUpperCase() + ' INTENSIFIES]')
     }
+    /*
     commands['^,richest$'] = function (from, to, msg) {
         if (to == '#pasta') {
             richestUsers(list => {
@@ -199,6 +202,7 @@ client.addListener('message', function (from, to, message) {
             })
         }
     }
+    */
 
     var object = '(code|program|script|app)'
     var negative = '(never|no|does not|doesn\'?t|isn\'?t|is not)'
@@ -254,6 +258,7 @@ setInterval(() => {
     client.say('#pasta', '!pay')
 }, 1000 * 60 * 60 * 6 + 1000 * 2) // 6 hour + 2 sec
 
+/*
 setInterval(() => {
     client.say('#pasta', '.bene')
 }, 1000 * 60 * 60 + 1000 * 2) // 1 hr + 2 sec
@@ -264,3 +269,4 @@ setInterval(() => {
         client.say('taylorswift', '.mug ' + richest[0])
     })
 }, 1000 * 60 * 5 + 1000 * 2) // 5 min + 2 seconds
+*/
