@@ -14,9 +14,6 @@ const admin = 'benwaffle'
 Array.prototype.random = function () {
     return this[Math.floor(Math.random() * this.length)]
 }
-Array.prototype.contains = function (obj) {
-    return this.indexOf(obj) != -1
-}
 
 /*
 function richestUsers(cb) {
@@ -40,7 +37,7 @@ function richestUsers(cb) {
 var ignored = []
 
 client.addListener('notice', function (nick, to, text, msg) {
-    if (text.indexOf('msg NickServ IDENTIFY') > -1) {
+    if (text.includes('msg NickServ IDENTIFY')) {
         debug('authenticating')
         client.send('nickserv', 'IDENTIFY ' + require('./secrets.js').password)
     }
@@ -54,7 +51,7 @@ client.addListener('message', function (from, to, message) {
     message = message.trim()
     debug(from + ' => ' + to + ': ' + message)
 
-    if (ignored.contains(from))
+    if (ignored.includes(from))
         return
 
     var dest = ''
@@ -218,7 +215,7 @@ client.addListener('message', function (from, to, message) {
     commands[object + '\\s+' + negative + '\\s+' + codeactions] = devexcuse
 
     commands['(fuck ?you|fuck ?off|eat a dick|kill (yo)?urself|shut (the fuck )?up)'] = function (from, to, msg) {
-        if (msg.indexOf(client.opt.nick) != -1)
+        if (msg.includes(client.opt.nick))
             return ['stfu', 'shut up, you ' + require('badwords/array').random(), 'eh fuck you buddy', 'lalala not listening', 'leave me alone ;_;', '#stopbothate'].random()
         else
             return 'why you heff to be mad?'
