@@ -155,8 +155,6 @@ client.addListener('message', function (from, to, message) {
         return london
     }
     commands['^,gay \\w+'] = function (from, to, msg) {
-        if (msg.length > 20)
-            msg = msg.substring(0, 20)
         let colors = [
             'dark_red',
             'light_red',
