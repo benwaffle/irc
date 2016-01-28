@@ -155,8 +155,9 @@ client.addListener('message', function (from, to, message) {
         return london
     }
     commands['^,gay \\w+'] = function (from, to, msg) {
-        if (msg.length > 20) msg = msg.substring(0, 20)
-        var colors = [
+        if (msg.length > 20)
+            msg = msg.substring(0, 20)
+        let colors = [
             'dark_red',
             'light_red',
             'orange',
@@ -172,16 +173,16 @@ client.addListener('message', function (from, to, message) {
         ]
 
         msg = msg.split(' ').slice(1).join(' ')
-        var gay = ''
-        var ci = 0
-        for (var i = 0; i < msg.length; ++i) {
-            for (var c = 0; c < msg.length; ++c) {
-                gay += irc.colors.wrap(colors.random(), msg[c])
+        let out = ''
+        for (let i = 0; i < msg.length; ++i) {
+            if (msg[i] == ' ') {
+                out += ' '
+            } else {
+                let color = colors[i % colors.length]
+                out += irc.colors.wrap(color, msg[i])
             }
-            gay += '\n'
-            msg = msg[msg.length - 1] + msg.substring(0, msg.length - 1)
         }
-        return gay
+        return out
     }
     commands['^\\[.+\\]$'] = function (from, to, msg) {
         var str = msg.substring(1, msg.length - 1)
