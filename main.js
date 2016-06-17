@@ -220,7 +220,7 @@ client.addListener('message', function (from, to, message) {
             return 'why you heff to be mad?'
     }
 
-    commands['^test$'] = '✔'
+    commands['^test$'] = '✓'
     commands['^ay+$'] = 'lmao'
     commands['^420$'] = 'blaze it'
     commands['^same$'] = 'same'
