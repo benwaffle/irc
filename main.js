@@ -250,15 +250,17 @@ client.addListener('error', function (message) {
     debug('error: ', message)
 })
 
+/*
 setInterval(() => {
     client.say('#pasta', '!pay')
 }, 1000 * 60 * 60 * 6 + 1000 * 2) // 6 hour + 2 sec
+*/
 
-/*
 setInterval(() => {
     client.say('#pasta', '.bene')
 }, 1000 * 60 * 60 + 1000 * 2) // 1 hr + 2 sec
 
+/*
 setInterval(() => {
     richestUsers(list => {
         var richest = list.filter(u => u[0] != client.opt.nick)[0]
